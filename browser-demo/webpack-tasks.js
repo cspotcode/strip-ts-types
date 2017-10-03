@@ -77,21 +77,22 @@
 
 // entry point that is never loaded in the browser but triggers some webpack build tasks.
 // Copy all .html to the output directory
-__webpack_require__(/*! file?name=./[path][name].[ext]!./ */ 256);
+__webpack_require__(/*! file?name=./[path][name].[ext]!../ */ 256);
 
 
 /***/ }),
 
 /***/ 256:
-/*!************************************************************************************************!*\
-  !*** ./browser-demo ../node_modules/file-loader/dist/cjs.js?name=./[path][name].[ext] \.html$ ***!
-  \************************************************************************************************/
+/*!***********************************************************************************!*\
+  !*** . ../node_modules/file-loader/dist/cjs.js?name=./[path][name].[ext] \.html$ ***!
+  \***********************************************************************************/
 /*! no static exports found */
 /*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./index.html": 257
+	"./browser-demo/index.html": 257,
+	"./index.html": 258
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -120,6 +121,18 @@ webpackContext.id = 256;
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "./browser-demo/index.html";
+
+/***/ }),
+
+/***/ 258:
+/*!**************************************************************************************!*\
+  !*** ../node_modules/file-loader/dist/cjs.js?name=./[path][name].[ext]!./index.html ***!
+  \**************************************************************************************/
+/*! no static exports found */
+/*! all exports used */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "./index.html";
 
 /***/ })
 
