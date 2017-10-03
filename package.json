@@ -1,0 +1,38 @@
+{
+  "name": "strip-ts-types",
+  "version": "0.0.1",
+  "description": "Replace TypeScript type annotations with whitespace to demonstrate how close it is to regular ECMAScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
+    "build": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
+    "watch": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
+    "start": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
+    "start-browser": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1"
+  },
+  "author": "Andrew Bradley <cspotcode@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/jquery": "^3.2.12",
+    "@types/lodash": "^4.14.76",
+    "@types/node": "^8.0.31",
+    "@types/react": "^16.0.7",
+    "@types/webpack": "^3.0.12",
+    "file-loader": "^1.1.4",
+    "imports-loader": "^0.7.1",
+    "jquery": "^3.2.1",
+    "loader-utils": "^1.1.0",
+    "lodash": "^4.17.4",
+    "mobx": "^3.3.0",
+    "monaco-editor": "^0.10.0",
+    "react": "^16.0.0",
+    "text-loader": "0.0.1",
+    "ts-loader": "^2.3.7",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.3",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
+  },
+  "files": [
+  ]
+}
