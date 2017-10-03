@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Monaco Example</title>
+        <script src="browser-demo/browser.js"></script>
+        <style>
+            html,body,div {
+                border: 0;
+                padding: 0;
+                margin: 0;
+            }
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+            .container {
+                width: calc(100% - 40px);
+                height: calc(100% - 40px);
+                margin-left: 20px;
+                margin-top: 20px;
+                border: 1px solid black;
+            }
+            .editor {
+                width: 50%;
+                height: 100%;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="editor left input"></div>
+            <div class="editor right output"></div>
+            </div>
+        </div>
+    </body>
+</html>
