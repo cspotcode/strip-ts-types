@@ -79,7 +79,7 @@
 // Copy all .html to the output directory
 __webpack_require__(/*! file?name=./[path][name].[ext]!../ */ 256);
 // Copy other misc
-__webpack_require__(/*! file?name=./.nojekyll!../.nojekyll */ 259);
+!(function webpackMissingModule() { var e = new Error("Cannot find module \"file?name=./.nojekyll!../.nojekyll\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /***/ }),
@@ -135,18 +135,6 @@ module.exports = __webpack_require__.p + "./browser-demo/index.html";
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "./index.html";
-
-/***/ }),
-
-/***/ 259:
-/*!****************************************************************************!*\
-  !*** ../node_modules/file-loader/dist/cjs.js?name=./.nojekyll!./.nojekyll ***!
-  \****************************************************************************/
-/*! no static exports found */
-/*! all exports used */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "./.nojekyll";
 
 /***/ })
 
