@@ -4,7 +4,7 @@
 import monacoPromise from './monaco-editor-shim';
 
 import * as $ from 'jquery';
-import { throttle } from "lodash";
+import { debounce } from "lodash";
 import { stripTypes } from '../core/index';
 
 $(document).ready(async () => {
@@ -22,7 +22,7 @@ $(document).ready(async () => {
     inputEditor.onDidChangeModelContent((e) => {
         throttledUpdateOutput();
     });
-    const throttledUpdateOutput = throttle(updateOutput, 400);
+    const throttledUpdateOutput = debounce(updateOutput, 400);
 
     function updateOutput() {
         outputEditor.setValue(stripTypes(inputEditor.getValue()));

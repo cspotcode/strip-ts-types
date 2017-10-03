@@ -67,139 +67,139 @@ export function stripTypes(src: string): string {
     }
     acc += src.substring(from);
     return acc;
-}
 
-function transformerFactory(ctx: ts.TransformationContext) {
-    return transformer;
+    function markForOmission(node: Node) {
+        // const start = node.getFullStart();
+        const start = node.getStart(srcFile, false);
+        const end = node.getEnd();
+        omittedSpans.push({start, end});
+    }
 
-    function transformer(root: ts.SourceFile) {
-        const nodePath: Array<Node> = [];
-        visitor(root);
-        return root;
+    function transformerFactory(ctx: ts.TransformationContext) {
+        return transformer;
 
-        function visitor(node: Node): ts.VisitResult<ts.Node> {
-            // 158 - 173
-            switch(node.kind) {
-                case SyntaxKind.InterfaceDeclaration:
-                case SyntaxKind.TypeAliasDeclaration:
-                case SyntaxKind.TypeParameter:
-                    markForOmission(node);
-                    return node;
-                case SyntaxKind.Parameter:
-                case SyntaxKind.PropertyDeclaration:
-                    // (node as ts.FunctionDeclaration).parameters[0].
-                    node.getChildren().filter(v => v.kind === SyntaxKind.ColonToken).forEach(markForOmission);
-                    break;
-                case SyntaxKind.TypeAssertionExpression:
-                    node.getChildren().filter(v => includes([SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken], v.kind)).forEach(markForOmission);
-                    break;
-                case SyntaxKind.FunctionDeclaration:
-                    if(!(node as ts.FunctionDeclaration).body) {
+        function transformer(root: ts.SourceFile) {
+            const nodePath: Array<Node> = [];
+            visitor(root);
+            return root;
+
+            function visitor(node: Node): ts.VisitResult<ts.Node> {
+                // 158 - 173
+                switch(node.kind) {
+                    case SyntaxKind.InterfaceDeclaration:
+                    case SyntaxKind.TypeAliasDeclaration:
+                    case SyntaxKind.TypeParameter:
                         markForOmission(node);
                         return node;
-                    }
-                    node.getChildren().filter(v => includes([SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken, SyntaxKind.ColonToken], v.kind)).forEach(markForOmission);
-                    break;
-                case SyntaxKind.AsExpression:
-                    node.getChildren().filter(v => v.kind === SyntaxKind.AsKeyword).forEach(markForOmission);
-                    break;
-            }
-
-            for(let prop in node) {
-                const val = (node as TODO)[prop];
-                if(Array.isArray(val)) {
-                    val.forEach(v => checkIfType(v, prop));
-                } else {
-                    checkIfType(val, prop);
+                    case SyntaxKind.Parameter:
+                    case SyntaxKind.PropertyDeclaration:
+                        // (node as ts.FunctionDeclaration).parameters[0].
+                        node.getChildren().filter(v => v.kind === SyntaxKind.ColonToken).forEach(markForOmission);
+                        break;
+                    case SyntaxKind.TypeAssertionExpression:
+                        node.getChildren().filter(v => includes([SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken], v.kind)).forEach(markForOmission);
+                        break;
+                    case SyntaxKind.FunctionDeclaration:
+                        if(!(node as ts.FunctionDeclaration).body) {
+                            markForOmission(node);
+                            return node;
+                        }
+                        node.getChildren().filter(v => includes([SyntaxKind.LessThanToken, SyntaxKind.GreaterThanToken, SyntaxKind.ColonToken], v.kind)).forEach(markForOmission);
+                        break;
+                    case SyntaxKind.AsExpression:
+                        node.getChildren().filter(v => v.kind === SyntaxKind.AsKeyword).forEach(markForOmission);
+                        break;
                 }
-            }
-            function checkIfType(val: any, prop: string) {
-                if(val != null && typeof val.kind ===  'number') {
-                    if(prop === 'type') {
-                        markForOmission(val as Node);
-                        return;
-                    }
-                    if(val.kind >= ts.SyntaxKind.FirstTypeNode && val.kind <= ts.SyntaxKind.LastTypeNode) {
-                        markForOmission(val as Node);
-                        return;
-                    }
-                    if(val.kind === SyntaxKind.HeritageClause && (val as ts.HeritageClause).token === ts.SyntaxKind.ImplementsKeyword) {
-                        markForOmission(val as Node);
-                        return;
-                    }
-                    (val as ts.ClassDeclaration).heritageClauses;
-                    (val as ts.ClassDeclaration).typeParameters;
-                    (val as ts.ClassDeclaration).decorators;
-                    (val as ts.ClassDeclaration).modifiers;
-                    switch(val.kind) {
+
+                for(let prop in node) {
+                    const val = (node as TODO)[prop];
+                    if(Array.isArray(val)) {
+                        val.forEach(v => checkIfType(v, prop));
+                    } else {
+                        checkIfType(val, prop);
                     }
                 }
-            }
-
-            const children = flatten(node.getChildren(srcFile).map(v =>
-                (v.kind === SyntaxKind.SyntaxList) ? v.getChildren() : [v]
-            ));
-            // const children2 = sortBy(children, v => v.getStart(srcFile, false));
-            // each(children, (child, i) => {
-            //     assert(child === children2[i]);
-            // })
-            const visitedChildren = [];
-            let lastVisitedChildIndex = -1;
-            ts.visitEachChild(node, (n) => {
-                const newIndexOf = children.indexOf(n);
-
-                console.log('---');
-                console.log(path([...nodePath, n]));
-                console.log(`${ lastVisitedChildIndex } ${ newIndexOf }`);
-                console.log('---');
-
-                lastVisitedChildIndex = newIndexOf;
-
-                visitedChildren.push(n);
-                nodePath.push(n);
-                const ret = visitor(n);
-                nodePath.pop();
-                return ret;
-            }, ctx);
-            const nums = {
-                '-1': '   ',
-                0:    '0  ',
-                1:    '1  ',
-                2:    '2  ',
-                3:    '3  ',
-                4:    '4  ',
-                5:    '5  ',
-                6:    '6  ',
-                7:    '7  ',
-                8:    '8  ',
-                9:    '9  ',
-            }
-            console.log('===');
-            const p = path(nodePath);
-            console.log(`   ${ p }>`);
-            const prefix = p.replace(/./g, ' ');
-            children.forEach(v => {
-                // return `${ visitedChildren.indexOf(v) >= 0 ? 'Y' : 'N' }:${ kind(v) }`
-                console.log(`${ (nums[visitedChildren.indexOf(v)]/* >= 0 ? '* ' : '  '*/) }${ prefix }>${ kind(v) }`);
-                if(includes([
-                    SyntaxKind.AbstractKeyword,
-                    SyntaxKind.ReadonlyKeyword
-                ], v.kind)) {
-                    markForOmission(v);
+                function checkIfType(val: any, prop: string) {
+                    if(val != null && typeof val.kind ===  'number') {
+                        if(prop === 'type') {
+                            markForOmission(val as Node);
+                            return;
+                        }
+                        if(val.kind >= ts.SyntaxKind.FirstTypeNode && val.kind <= ts.SyntaxKind.LastTypeNode) {
+                            markForOmission(val as Node);
+                            return;
+                        }
+                        if(val.kind === SyntaxKind.HeritageClause && (val as ts.HeritageClause).token === ts.SyntaxKind.ImplementsKeyword) {
+                            markForOmission(val as Node);
+                            return;
+                        }
+                        (val as ts.ClassDeclaration).heritageClauses;
+                        (val as ts.ClassDeclaration).typeParameters;
+                        (val as ts.ClassDeclaration).decorators;
+                        (val as ts.ClassDeclaration).modifiers;
+                        switch(val.kind) {
+                        }
+                    }
                 }
-            });
-            console.log('===');
 
-            return node;
+                const children = flatten(node.getChildren(srcFile).map(v =>
+                    (v.kind === SyntaxKind.SyntaxList) ? v.getChildren() : [v]
+                ));
+                // const children2 = sortBy(children, v => v.getStart(srcFile, false));
+                // each(children, (child, i) => {
+                //     assert(child === children2[i]);
+                // })
+                const visitedChildren = [];
+                let lastVisitedChildIndex = -1;
+                ts.visitEachChild(node, (n) => {
+                    const newIndexOf = children.indexOf(n);
+
+                    console.log('---');
+                    console.log(path([...nodePath, n]));
+                    console.log(`${ lastVisitedChildIndex } ${ newIndexOf }`);
+                    console.log('---');
+
+                    lastVisitedChildIndex = newIndexOf;
+
+                    visitedChildren.push(n);
+                    nodePath.push(n);
+                    const ret = visitor(n);
+                    nodePath.pop();
+                    return ret;
+                }, ctx);
+                const nums = {
+                    '-1': '   ',
+                    0:    '0  ',
+                    1:    '1  ',
+                    2:    '2  ',
+                    3:    '3  ',
+                    4:    '4  ',
+                    5:    '5  ',
+                    6:    '6  ',
+                    7:    '7  ',
+                    8:    '8  ',
+                    9:    '9  ',
+                }
+                console.log('===');
+                const p = path(nodePath);
+                console.log(`   ${ p }>`);
+                const prefix = p.replace(/./g, ' ');
+                children.forEach(v => {
+                    // return `${ visitedChildren.indexOf(v) >= 0 ? 'Y' : 'N' }:${ kind(v) }`
+                    console.log(`${ (nums[visitedChildren.indexOf(v)]/* >= 0 ? '* ' : '  '*/) }${ prefix }>${ kind(v) }`);
+                    if(includes([
+                        SyntaxKind.AbstractKeyword,
+                        SyntaxKind.ReadonlyKeyword
+                    ], v.kind)) {
+                        markForOmission(v);
+                    }
+                });
+                console.log('===');
+
+                return node;
+            }
         }
     }
-}
-
-function markForOmission(node: Node) {
-    // const start = node.getFullStart();
-    const start = node.getStart(srcFile, false);
-    const end = node.getEnd();
-    omittedSpans.push({start, end});
 }
 
 function json(v: any): string {

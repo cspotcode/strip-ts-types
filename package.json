@@ -8,7 +8,8 @@
     "build": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
     "watch": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
     "start": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
-    "start-browser": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1"
+    "start-browser": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1",
+    "publish-site": "powershell -NoProfile -ExecutionPolicy RemoteSigned -File ./scripts/npm-run.ps1"
   },
   "author": "Andrew Bradley <cspotcode@gmail.com>",
   "license": "MIT",
